@@ -1,12 +1,6 @@
-import { Input, Text, Button, Spinner } from "@ui-kitten/components";
+import { Input, Button, Spinner, Text } from "@ui-kitten/components";
 import React, { useContext } from "react";
-import {
-  Alert,
-  StyleSheet,
-  Touchable,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { useNavigation } from "@react-navigation/native";
@@ -14,6 +8,12 @@ import { AuthContext, AuthState } from "../context/AuthProvider";
 import { theme } from "../theme";
 import Loading from "../components/Loading";
 import Layout from "../components/Layout";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  SlideInDown,
+  SlideInRight,
+} from "react-native-reanimated";
 
 const schema = yup.object().shape({
   email: yup.string().email().required("The email is required"),
@@ -52,56 +52,82 @@ const Login = () => {
             navigation.navigate("Calendar" as never);
           })
           .catch((error) =>
-            Alert.alert("Error", "There was a problem logging")
+            auth.handleOpenSnackbar("Invalid email or password.")
           );
     } catch (error) {
       console.log("error logging", error);
-      Alert.alert("Error", "There was a problem logging");
+      auth.handleOpenSnackbar("Invalid email or password.");
     }
   };
-
-  if (auth && auth.loading) return <Loading />;
 
   return (
     <Layout style={styles.container}>
       <>
-        <View style={styles.card}>
-          <Text style={styles.text}>Welcome to SuenhoLucido!</Text>
-          <View>
-            <View style={styles.inputContainer}>
-              <Input
-                placeholder="Email"
-                value={values.email}
-                onChangeText={handleChange("email")}
-                status={errors.email ? "danger" : "primary"}
-                style={styles.input}
-              />
-              {errors.email && (
-                <Text status="danger" style={{ paddingTop: 5, fontSize: 12 }}>
-                  {errors.email}
-                </Text>
-              )}
-              <Input
-                placeholder="Password"
-                value={values.password}
-                secureTextEntry
-                onChangeText={handleChange("password")}
-                status={errors.password ? "danger" : "primary"}
-                style={styles.input}
-              />
-              {errors.password && (
-                <Text status="danger" style={{ paddingTop: 5, fontSize: 12 }}>
-                  {errors.password}
-                </Text>
-              )}
+        <Animated.View
+          entering={SlideInRight.duration(500)}
+          exiting={SlideInDown.duration(200)}
+        >
+          <View style={styles.card}>
+            <Text style={styles.text}>Welcome to SuenhoLucido!</Text>
+            <View>
+              <View style={styles.inputContainer}>
+                <Input
+                  placeholder="Email"
+                  value={values.email}
+                  onChangeText={handleChange("email")}
+                  status={errors.email ? "danger" : "primary"}
+                  style={styles.input}
+                />
+                {errors.email && (
+                  <Text
+                    style={{
+                      paddingTop: 5,
+                      paddingBottom: 5,
+                      fontSize: 12,
+                      color: theme.colors.secondary[200],
+                    }}
+                  >
+                    {errors.email}
+                  </Text>
+                )}
+                <Input
+                  placeholder="Password"
+                  value={values.password}
+                  secureTextEntry
+                  onChangeText={handleChange("password")}
+                  status={errors.password ? "danger" : "primary"}
+                  style={styles.input}
+                />
+                {errors.password && (
+                  <Text
+                    style={{
+                      paddingTop: 5,
+                      fontSize: 12,
+                      color: theme.colors.secondary[200],
+                    }}
+                  >
+                    {errors.password}
+                  </Text>
+                )}
+              </View>
+              <Button
+                style={styles.loginBtn}
+                onPress={() => handleSubmit()}
+                disabled={auth && auth.loading}
+              >
+                {auth && auth.loading ? (
+                  <View>
+                    <Spinner />
+                  </View>
+                ) : (
+                  <Text>Login</Text>
+                )}
+              </Button>
             </View>
-            <Button style={styles.loginBtn} onPress={() => handleSubmit()}>
-              Login
-            </Button>
           </View>
-        </View>
+        </Animated.View>
         <TouchableOpacity
-          style={styles.forgot}
+          style={{ ...styles.forgot }}
           onPress={() => navigation.navigate("Reset" as never)}
         >
           <Text>Forgot your Password?</Text>

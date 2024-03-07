@@ -1,20 +1,20 @@
 import { Avatar, Button, Input, Text } from "@ui-kitten/components";
 import React, { useContext, useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Layout from "../components/Layout";
 import { AuthContext, AuthState } from "../context/AuthProvider";
 import { auth } from "../../credentials";
 import { updateProfile } from "firebase/auth";
 
 const Profile = () => {
-  const { user } = useContext(AuthContext) as AuthState;
+  const { user, handleOpenSnackbar } = useContext(AuthContext) as AuthState;
   const [userData, setUserData] = useState({
     displayName: user.displayName,
     email: user.email,
     phoneNumber: user.phoneNumber,
     photoURL: user.photoURL,
   });
-  console.log("user ----", user);
+
   const handleChange = (value: any, name: keyof typeof userData) => {
     setUserData((prev) => {
       return {
@@ -27,8 +27,8 @@ const Profile = () => {
   const handleUpdateUser = () => {
     if (auth && auth.currentUser) {
       updateProfile(auth.currentUser, userData)
-        .then((res) => Alert.alert("Profile updated!"))
-        .catch(() => Alert.alert("An error occurred!", "Please try again"));
+        .then((res) => handleOpenSnackbar("Profile updated!"))
+        .catch(() => handleOpenSnackbar("An error occurred!"));
     }
   };
 
@@ -47,7 +47,9 @@ const Profile = () => {
           <Text style={styles.title}>Profile</Text>
         </View>
         <View>
-          <Text style={styles.subtitle}>{`Hi ${userData.email}!`}</Text>
+          <Text style={styles.subtitle}>{`Hi ${
+            user.displayName?.split(" ")[0] || user.email || ""
+          }!`}</Text>
         </View>
         <View
           style={{ alignItems: "center", justifyContent: "center", gap: 10 }}

@@ -4,17 +4,20 @@ import ActivityCard from "./ActivityCard";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Activity } from "../utils/mock";
 import { format, fromUnixTime } from "date-fns";
+import Loader from "./Loader";
 
 interface ActivitiesListProps {
   selectedDate: Date;
   activities: { [date: string]: Activity[] };
   handleDeleteActivity: (id: string, date: Date) => void;
+  loading: boolean;
 }
 
 const ActivitiesList = ({
   selectedDate,
   activities,
   handleDeleteActivity,
+  loading,
 }: ActivitiesListProps) => {
   const todayActivities = useMemo(() => {
     const formattedDate = format(new Date(selectedDate), "dd/MM/yyyy");
@@ -26,27 +29,33 @@ const ActivitiesList = ({
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scroll}>
-        {todayActivities && todayActivities.length ? (
-          todayActivities.map((activity, index) => (
-            <ActivityCard
-              key={activity.id}
-              activity={activity}
-              index={index}
-              handleDeleteActivity={handleDeleteActivity}
-            />
-          ))
-        ) : (
-          <View style={{ alignItems: "center", marginTop: 100, gap: 20 }}>
-            <Text category="h5">No activities today!</Text>
-            <Icon
-              name="calendar-outline"
-              fill="#FFFFFF30"
-              style={styles.icon}
-            />
-          </View>
-        )}
-      </ScrollView>
+      {loading ? (
+        <View style={{ paddingTop: 15 }}>
+          <Loader />
+        </View>
+      ) : (
+        <ScrollView style={styles.scroll}>
+          {todayActivities && todayActivities.length ? (
+            todayActivities.map((activity, index) => (
+              <ActivityCard
+                key={activity.id}
+                activity={activity}
+                index={index}
+                handleDeleteActivity={handleDeleteActivity}
+              />
+            ))
+          ) : (
+            <View style={{ alignItems: "center", marginTop: 100, gap: 20 }}>
+              <Text category="h5">No activities today!</Text>
+              <Icon
+                name="calendar-outline"
+                fill="#FFFFFF30"
+                style={styles.icon}
+              />
+            </View>
+          )}
+        </ScrollView>
+      )}
     </View>
   );
 };

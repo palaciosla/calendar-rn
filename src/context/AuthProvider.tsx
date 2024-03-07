@@ -34,15 +34,17 @@ const AuthProvider = ({
   handleOpenSnackbar: (message: string) => void;
 }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const loginUser = (data: Data) => {
     setLoading(true);
-    return signInWithEmailAndPassword(auth, data.email, data.password);
+    return signInWithEmailAndPassword(auth, data.email, data.password).finally(
+      () => setLoading(false)
+    );
   };
 
   const logOut = () => {
-    setLoading(true);
+    setLoading(false);
     return signOut(auth);
   };
 
@@ -50,13 +52,9 @@ const AuthProvider = ({
     sendPasswordResetEmail(auth, email)
       .then(() => {
         handleOpenSnackbar("Password reset email sent!");
-        // Password reset email sent!
-        // ..
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // ..
+        handleOpenSnackbar("Password reset email could not been sent!");
       });
   };
 

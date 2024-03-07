@@ -19,6 +19,7 @@ const useActivities = () => {
   const [activities, setActivities] = useState<{
     [key: string]: Activity[];
   }>({});
+  const [loading, setLoading] = useState(false);
 
   const deleteActivity = async (id: string, date: Date) => {
     try {
@@ -58,33 +59,36 @@ const useActivities = () => {
   };
 
   const fetchActivities = async () => {
-    await getDocs(collection(db, "activities")).then((res) => {
-      const newData = res.docs.map((doc) => {
-        let data = doc.data();
-        return {
-          ...data,
-          id: doc.id,
-          date: formatISO(fromUnixTime(data.date.seconds)),
-          time: formatISO(fromUnixTime(data.time.seconds)),
-        };
-      });
-      setActivities(
-        newData.reduce((acc, cur) => {
-          let date = getDate(cur.date);
-          let exist = Object.keys(acc).find((key) => key === date);
-          return exist
-            ? { ...acc, [date]: [...acc[date], cur] }
-            : { ...acc, [date]: [cur] };
-        }, {} as any)
-      );
-    });
+    setLoading(true);
+    await getDocs(collection(db, "activities"))
+      .then((res) => {
+        const newData = res.docs.map((doc) => {
+          let data = doc.data();
+          return {
+            ...data,
+            id: doc.id,
+            date: formatISO(fromUnixTime(data.date.seconds)),
+            time: formatISO(fromUnixTime(data.time.seconds)),
+          };
+        });
+        setActivities(
+          newData.reduce((acc, cur) => {
+            let date = getDate(cur.date);
+            let exist = Object.keys(acc).find((key) => key === date);
+            return exist
+              ? { ...acc, [date]: [...acc[date], cur] }
+              : { ...acc, [date]: [cur] };
+          }, {} as any)
+        );
+      })
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
     fetchActivities();
   }, []);
 
-  return { activities, setActivities, deleteActivity, createActivity };
+  return { activities, setActivities, deleteActivity, createActivity, loading };
 };
 
 export default useActivities;

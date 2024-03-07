@@ -2,7 +2,13 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { theme } from "../theme";
 
-const Layout = ({ children, style }: { children: JSX.Element; style?: any }) => {
+const Layout = ({
+  children,
+  style,
+}: {
+  children: JSX.Element;
+  style?: any;
+}) => {
   return <View style={{ ...styles.root, ...style }}>{children}</View>;
 };
 
