@@ -3,24 +3,23 @@ import React, { useMemo } from "react";
 import ActivityCard from "./ActivityCard";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Activity } from "../utils/mock";
+import { format, fromUnixTime } from "date-fns";
 
 interface ActivitiesListProps {
   selectedDate: Date;
   activities: { [date: string]: Activity[] };
-  handleDeleteActivity: (id: number, date: Date) => void;
-  handleOpenSnackbar: (message: string) => void;
+  handleDeleteActivity: (id: string, date: Date) => void;
 }
 
 const ActivitiesList = ({
   selectedDate,
   activities,
   handleDeleteActivity,
-  handleOpenSnackbar,
 }: ActivitiesListProps) => {
   const todayActivities = useMemo(() => {
-    const formattedDate = selectedDate.toLocaleDateString();
+    const formattedDate = format(new Date(selectedDate), "dd/MM/yyyy");
     const todayHasActivities = Object.keys(activities).find(
-      (day) => day === formattedDate
+      (date) => date === formattedDate
     );
     return todayHasActivities ? activities[formattedDate] : [];
   }, [selectedDate, activities]);
@@ -35,7 +34,6 @@ const ActivitiesList = ({
               activity={activity}
               index={index}
               handleDeleteActivity={handleDeleteActivity}
-              handleOpenSnackbar={handleOpenSnackbar}
             />
           ))
         ) : (
@@ -54,7 +52,7 @@ const ActivitiesList = ({
 };
 
 const styles = StyleSheet.create({
-  container: { height: 300 },
+  container: { height: "auto" },
   scroll: {
     paddingHorizontal: 20,
     gap: 10,

@@ -21,21 +21,16 @@ import {
   TYPE_OF_ACTIVITIES,
 } from "../utils/mock";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { getAmPm } from "../utils/utils";
 import * as yup from "yup";
 import { Formik, useFormik } from "formik";
 
 interface AddModalProps {
   modalIsOpen: boolean;
   handleCloseModal: () => void;
-  setActivities: React.Dispatch<
-    React.SetStateAction<{
-      [date: string]: Activity[];
-    }>
-  >;
+  createActivity: (values: CreateFormData) => void;
 }
 
-type FormData = {
+export type CreateFormData = {
   name: string;
   date: Date;
   time: Date | null;
@@ -51,7 +46,7 @@ const schema = yup.object().shape({
   time: yup.string().trim().required("This field is required"),
 });
 
-const INITIAL_FORM_DATA: FormData = {
+const INITIAL_FORM_DATA: CreateFormData = {
   name: "",
   date: new Date(),
   time: null,
@@ -63,7 +58,7 @@ const INITIAL_FORM_DATA: FormData = {
 const AddModal = ({
   modalIsOpen,
   handleCloseModal,
-  setActivities,
+  createActivity,
 }: AddModalProps) => {
   const [open, setOpen] = React.useState(false);
   const [multiSelectedIndex, setMultiSelectedIndex] = React.useState<
@@ -77,33 +72,26 @@ const AddModal = ({
       })
       .join(", ");
 
-  const createNewActivity = async (values: FormData) => {
+  const createNewActivity = async (values: CreateFormData) => {
     const newActivity = {
       id: new Date(),
       ...values,
     };
 
-    setActivities((prev) => {
-      const prevActivities = prev[values.date.toLocaleDateString()] || [];
-      return {
-        ...prev,
-        [values.date.toLocaleDateString() as any]: [
-          ...prevActivities,
-          newActivity,
-        ],
-      };
-    });
+    createActivity(newActivity);
+
+    setMultiSelectedIndex([]);
     handleCloseModal();
   };
 
-  const { values, setFieldValue, errors, resetForm } = useFormik<FormData>({
-    initialValues: INITIAL_FORM_DATA,
-    onSubmit: (values) => {
-      createNewActivity(values);
-      resetForm();
-      setMultiSelectedIndex([]);
-    },
-  });
+  const { values, setFieldValue, errors, resetForm } =
+    useFormik<CreateFormData>({
+      initialValues: INITIAL_FORM_DATA,
+      onSubmit: (values) => {
+        createNewActivity(values);
+        resetForm();
+      },
+    });
 
   return (
     <Modal
@@ -278,8 +266,13 @@ const AddModal = ({
                   {values.time && values.date && values.duration && (
                     <Text
                       style={{ textAlign: "center", fontWeight: "800" }}
-                    >{`${values.date.toLocaleDateString()} - ${values.time.getHours()}:${values.time.getMinutes()} ${getAmPm(
-                      values.time
+                    >{`${values.date.toLocaleDateString()} - ${values.time.toLocaleString(
+                      "en-US",
+                      {
+                        hour: "numeric",
+                        minute: "numeric",
+                        hour12: true,
+                      }
                     )} - ${values.duration}`}</Text>
                   )}
                 </View>

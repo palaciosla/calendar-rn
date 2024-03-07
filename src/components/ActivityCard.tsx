@@ -1,10 +1,12 @@
 import { Icon, Text } from "@ui-kitten/components";
-import React from "react";
+import React, { useContext } from "react";
 import { Animated, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Activity } from "../utils/mock";
 import UserList from "./UserList";
 import { addDurationToTime, getAmPm } from "../utils/utils";
 import { Swipeable } from "react-native-gesture-handler";
+import { fromUnixTime, getHours, getMinutes } from "date-fns";
+import { AuthContext, AuthState } from "../context/AuthProvider";
 
 const getTypeIcon = (type: Activity["type"]) => {
   switch (type) {
@@ -22,7 +24,7 @@ const getTypeIcon = (type: Activity["type"]) => {
 const renderRightActions = (
   progress: any,
   dragX: any,
-  handleDeleteActivity: (id: number, date: Date) => void,
+  handleDeleteActivity: (id: string, date: Date) => void,
   activity: Activity,
   handleOpenSnackbar: (message: string) => void
 ) => {
@@ -80,14 +82,13 @@ const ActivityCard = ({
   activity,
   index,
   handleDeleteActivity,
-  handleOpenSnackbar,
 }: {
   activity: Activity;
   index: number;
-  handleDeleteActivity: (id: number, date: Date) => void;
-  handleOpenSnackbar: (message: string) => void;
+  handleDeleteActivity: (id: string, date: Date) => void;
 }) => {
   const endTime = addDurationToTime(activity.time, activity.duration);
+  const { handleOpenSnackbar } = useContext(AuthContext) as AuthState;
 
   return (
     <Swipeable
@@ -110,8 +111,9 @@ const ActivityCard = ({
       >
         <View style={{ flex: 1.3 }}>{getTypeIcon(activity.type)}</View>
         <View style={{ flex: 5 }}>
-          <Text category="c1">{`${activity.time.getHours()}:${activity.time
-            .getMinutes()
+          <Text category="c1">{`${getHours(activity.time)}:${getMinutes(
+            activity.time
+          )
             .toString()
             .padStart(2, "0")} - ${endTime.getHours()}:${endTime
             .getMinutes()
