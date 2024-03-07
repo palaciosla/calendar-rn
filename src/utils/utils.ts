@@ -12,7 +12,8 @@ export const durationToMinutes = (duration: string): number => {
 
 export const addDurationToTime = (time: Date, duration: string): Date => {
   const minutesToAdd = durationToMinutes(duration);
-  const newTime = new Date(time.getTime() + minutesToAdd * 60000);
+  const date = new Date(time);
+  const newTime = new Date(date.getTime() + minutesToAdd * 60000);
   return newTime;
 };
 
