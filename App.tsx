@@ -1,12 +1,6 @@
 import "react-native-gesture-handler";
-import {
-  AppRegistry,
-  Platform,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import React, { useEffect } from "react";
+import { StatusBar, StyleSheet, View } from "react-native";
 import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
 import * as eva from "@eva-design/eva";
 import Constants from "expo-constants";
@@ -18,8 +12,21 @@ import AuthProvider from "./src/context/AuthProvider";
 import { theme } from "./src/theme";
 import { useState } from "react";
 import Snackbar from "./src/components/Snackbar";
+import * as Font from "expo-font";
+import * as mapping from "./mapping.json";
+
+const loadFonts = async () => {
+  await Font.loadAsync({
+    "montserrat-bold": require("./assets/fonts/Montserrat-Bold.ttf"),
+    "montserrat-extrabold": require("./assets/fonts/Montserrat-ExtraBold.ttf"),
+    "montserrat-light": require("./assets/fonts/Montserrat-Light.ttf"),
+    "montserrat-medium": require("./assets/fonts/Montserrat-Medium.ttf"),
+    "montserrat-regular": require("./assets/fonts/Montserrat-Regular.ttf"),
+  });
+};
 
 export default function App() {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
   const [snackbar, setSnackbar] = useState({
     isVisible: false,
     message: "",
@@ -32,11 +39,17 @@ export default function App() {
     setSnackbar({ isVisible: true, message });
   };
 
+  useEffect(() => {
+    loadFonts().finally(() => setFontsLoaded(true));
+  }, []);
+
+  if (!fontsLoaded) return null;
+
   return (
     <>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <IconRegistry icons={EvaIconsPack} />
-        <ApplicationProvider {...eva} theme={eva.dark}>
+        <ApplicationProvider {...eva} theme={eva.dark} customMapping={mapping}>
           <View style={styles.container}>
             <AuthProvider handleOpenSnackbar={handleOpenSnackbar}>
               <NavigationContainer>
