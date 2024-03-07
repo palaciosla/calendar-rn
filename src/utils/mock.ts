@@ -32,7 +32,7 @@ export const PROFILES = [
 ];
 
 export type Activity = {
-  id: number;
+  id: string;
   type: "Review" | "Daily" | "Meeting";
   name: string;
   selectedUserIds: number[];
@@ -41,71 +41,71 @@ export type Activity = {
   date: Date;
 };
 
-type ActivityDate = {
+export type ActivityDate = {
   [key: string]: Activity[];
 };
 
-export const ACTIVITIES: ActivityDate = {
-  "1/6/2024": [
-    {
-      id: 1,
-      type: "Review",
-      name: "Mock 1",
-      selectedUserIds: [1, 3, 5],
-      duration: "15 min",
-      time: new Date(),
-      date: new Date(),
-    },
-    {
-      id: 2,
-      type: "Daily",
-      name: "Mock 2",
-      selectedUserIds: [4, 2],
-      duration: "30 min",
-      time: new Date(),
-      date: new Date(),
-    },
-    {
-      id: 3,
-      type: "Review",
-      name: "Mock 3",
-      selectedUserIds: [1, 2, 3],
-      duration: "15 min",
-      time: new Date(),
-      date: new Date(),
-    },
-  ],
-  "1/7/2024": [],
-  "1/8/2024": [
-    {
-      id: 1,
-      type: "Daily",
-      name: "Mock 13321",
-      selectedUserIds: [1, 3, 5],
-      duration: "30 min",
-      time: new Date(),
-      date: new Date(),
-    },
-    {
-      id: 2,
-      type: "Daily",
-      name: "Mock 232133",
-      selectedUserIds: [4, 2],
-      duration: "15 min",
-      time: new Date(),
-      date: new Date(),
-    },
-    {
-      id: 3,
-      type: "Review",
-      name: "Mock 33213123",
-      selectedUserIds: [1, 2, 3],
-      duration: "30 min",
-      time: new Date(),
-      date: new Date(),
-    },
-  ],
-};
+// export const ACTIVITIES: ActivityDate = {
+//   "1/6/2024": [
+//     {
+//       id: 1,
+//       type: "Review",
+//       name: "Mock 1",
+//       selectedUserIds: [1, 3, 5],
+//       duration: "15 min",
+//       time: new Date(),
+//       date: new Date(),
+//     },
+//     {
+//       id: 2,
+//       type: "Daily",
+//       name: "Mock 2",
+//       selectedUserIds: [4, 2],
+//       duration: "30 min",
+//       time: new Date(),
+//       date: new Date(),
+//     },
+//     {
+//       id: 3,
+//       type: "Review",
+//       name: "Mock 3",
+//       selectedUserIds: [1, 2, 3],
+//       duration: "15 min",
+//       time: new Date(),
+//       date: new Date(),
+//     },
+//   ],
+//   "1/7/2024": [],
+//   "1/8/2024": [
+//     {
+//       id: 1,
+//       type: "Daily",
+//       name: "Mock 13321",
+//       selectedUserIds: [1, 3, 5],
+//       duration: "30 min",
+//       time: new Date(),
+//       date: new Date(),
+//     },
+//     {
+//       id: 2,
+//       type: "Daily",
+//       name: "Mock 232133",
+//       selectedUserIds: [4, 2],
+//       duration: "15 min",
+//       time: new Date(),
+//       date: new Date(),
+//     },
+//     {
+//       id: 3,
+//       type: "Review",
+//       name: "Mock 33213123",
+//       selectedUserIds: [1, 2, 3],
+//       duration: "30 min",
+//       time: new Date(),
+//       date: new Date(),
+//     },
+//   ],
+// };
 
 export type ActivitiesType = "Meeting" | "Daily" | "Review";
 
